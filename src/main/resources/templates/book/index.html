@@ -23,6 +23,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/user/}">User</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/lend/create/}">Lend</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -31,8 +34,16 @@
     <div class="card mt-2">
         <div class="card-header d-flex flex-column align-items-center">
             <h2>Book List</h2>
-            <a th:href="@{/book/create}" class="btn btn-success mt-2">Insert book</a>
+            <div class="row">
+                <div class="col">
+                    <a th:href="@{/book/create}" class="btn btn-success mt-2">Insert book</a>
+                </div>
+                <div class="col">
+                    <a th:href="@{/lend/create}" class="btn btn-success mt-2">Insert lend</a>
+                </div>
+            </div>
         </div>
+
         <div class="card-body">
             <h2>List of books</h2>
             <table class="table table-striped">
@@ -41,7 +52,7 @@
                     <th>ID</th>
                     <th>Title</th>
                     <th>Author</th>
-                    <th>Year</th>
+                    <th>Isbm</th>
                     <th>Rented</th>
                     <th>Action</th>
                 </tr>
@@ -49,45 +60,17 @@
                 <tbody>
                 <tr th:each="book : ${books}">
                     <td th:text="${book.id}"></td>
-                    <td th:text="${book.author}"></td>
                     <td th:text="${book.title}"></td>
-                    <td th:text="${book.year}"></td>
-                    <td th:text="${book.user != null ? book.user.fname + ' ' + book.user.lname : ''}"></td>
+                    <td th:text="${book.author}"></td>
+                    <td th:text="${book.isbm}"></td>
                     <td>
-                        <a th:href="@{/book/update/{id}(id=${book.id})}" class="btn btn-warning me-2">Modification</a>
-                        <form th:action="@{/book/delete/{id}(id=${book.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this book?');" style="display:inline;">
-                            <input type="hidden" name="_method" value="delete" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                        <span th:if="${book.likedUser != null and book.likedUser.size() > 0}" th:text="${book.likedUser[0].fname + ' ' + book.likedUser[0].lname}"></span>
                     </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card-body">
-            <h2>Available Books</h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Year</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="book : ${books}" th:unless="${book.user != null}">
-                    <td th:text="${book.id}"></td>
-                    <td th:text="${book.author}"></td>
-                    <td th:text="${book.title}"></td>
-                    <td th:text="${book.year}"></td>
                     <td>
-                        <a th:href="@{/book/update/{id}(id=${book.id})}" class="btn btn-warning me-2">Modification</a>
+                        <a th:href="@{/book/update/{id}(id=${book.id})}" class="btn btn-warning me-2">Modifica</a>
                         <form th:action="@{/book/delete/{id}(id=${book.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this book?');" style="display:inline;">
                             <input type="hidden" name="_method" value="delete" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Elimina</button>
                         </form>
                     </td>
                 </tr>

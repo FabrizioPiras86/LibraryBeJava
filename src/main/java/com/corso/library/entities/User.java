@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -34,14 +35,8 @@ public class User {
     @Column(name = "lname", nullable = false, length = 100)
     private String lname;
 
-    @Column(name = "dob")
-    private LocalDate dob;
 
-    @Size(max = 30)
-    @Column(name = "phone", length = 30)
-    private String phone;
-
-    @OneToMany(mappedBy = "user")
-    private Set<Book> book = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "likedUser")
+    private List<Book> book;
 
 }

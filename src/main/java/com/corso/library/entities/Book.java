@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -31,13 +34,19 @@ public class Book {
     @Column(name = "author", nullable = false, length = 100)
     private String author;
 
-    @Size(max = 10)
-    @Column(name = "year", nullable = false, length = 10)
-    private String year;
+    @Size(max = 100)
+    @Column(name = "isbm", nullable = false, length = 100)
+    private String isbm;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "book_user",
+            joinColumns = @JoinColumn(name = "id_book"),
+            inverseJoinColumns = @JoinColumn(name = "id_user")
+    )
+    private List<User> likedUser = new ArrayList<>();
+
 
 }
 

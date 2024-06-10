@@ -20,9 +20,6 @@ public class BookService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Book> getAvailableBook() {
-        return bookRepository.findByUserIsNull();
-    }
 
     public List<Book> getBooks() {
         return bookRepository.findAll();
@@ -38,8 +35,8 @@ public class BookService {
             Book existingBook = bookOptional.get();
             existingBook.setAuthor(updatedBook.getAuthor());
             existingBook.setTitle(updatedBook.getTitle());
-            existingBook.setYear(updatedBook.getYear());
-            existingBook.setUser(updatedBook.getUser());
+            existingBook.setIsbm(updatedBook.getIsbm());
+            existingBook.setLikedUser(updatedBook.getLikedUser());
             return bookRepository.save(existingBook);
         }
         return null;
@@ -57,5 +54,30 @@ public class BookService {
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
+    public void addLikedUserToBook(Long bookId, Long userId) {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (bookOptional.isPresent() && userOptional.isPresent()) {
+            Book book = bookOptional.get();
+            User user = userOptional.get();
+            book.getLikedUser().add(user);
+            bookRepository.save(book);
+        }
+    }
+
+
+    public void removeUserFromBook(Long bookId, Long userId) {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (bookOptional.isPresent() && userOptional.isPresent()) {
+            Book book = bookOptional.get();
+            User user = userOptional.get();
+            book.getLikedUser().remove(user); // Rimuovi l'utente dal libro
+            bookRepository.save(book);
+        }
+    }
+
+
 }
 

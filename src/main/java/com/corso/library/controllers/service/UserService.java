@@ -39,13 +39,6 @@ public class UserService {
 
 
     public void updateUser(User user) {
-        // Formattiamo la data nel formato corretto "yyyy-MM-dd"
-        LocalDate dob = user.getDob();
-        if (dob != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String formattedDob = dob.format(formatter);
-            user.setDob(LocalDate.parse(formattedDob, formatter));
-        }
         userRepository.save(user);
     }
 }

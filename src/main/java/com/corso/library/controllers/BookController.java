@@ -34,19 +34,19 @@ public class BookController {
         model.addAttribute("book", new Book());
         List<User> users = userService.getAllUserOrderedByLastName();
         model.addAttribute("users", users);
-        return "book/create"; // Template name
+        return "book/create";
     }
 
     @PostMapping("/create")
     public String insert(@ModelAttribute Book book, Model model) {
-        if (book.getUser() != null && book.getUser().getId() != null) {
-            Optional<User> customerOpt = userService.findUserById(book.getUser().getId());
-            customerOpt.ifPresent(book::setUser);
+        if (book.getLikedUser() != null && !book.getLikedUser().isEmpty()) {
+            User user = book.getLikedUser().get(0);
+            bookService.save(book);
+            bookService.addLikedUserToBook(book.getId(), user.getId());
+        } else {
+            bookService.save(book);
         }
-        bookService.save(book);
-        List<Book> books = bookService.getBooks(); //
-        model.addAttribute("books", books); //
-        return "redirect:/book/"; //
+        return "redirect:/book/";
     }
 
     @GetMapping("/update/{id}")
@@ -56,6 +56,12 @@ public class BookController {
             model.addAttribute("book", book);
             List<User> users = userService.getAllUserOrderedByLastName();
             model.addAttribute("users", users);
+
+            if (book.getLikedUser() != null && !book.getLikedUser().isEmpty()) {
+                User currentUser = book.getLikedUser().get(0);
+                model.addAttribute("currentUser", currentUser);
+            }
+
             return "book/update";
         } else {
             return "book/not_found";
@@ -64,27 +70,31 @@ public class BookController {
 
 
     @PostMapping("/update/{id}")
-    public String updateBook(@PathVariable Long id, @ModelAttribute("book") Book updatedBook, @RequestParam(required = false) boolean removeCustomer) {
+    public String updateBook(@PathVariable Long id, @ModelAttribute("book") Book updatedBook, @RequestParam(required = false) boolean removeUserFlag, Model model) {
         Book existingBook = bookService.getById(id);
         if (existingBook != null) {
-            if (removeCustomer) {
-                existingBook.setUser(null);
+            if (removeUserFlag) {
+                existingBook.getLikedUser().clear(); // Rimuove l'utente associato al libro
             } else {
-                if (updatedBook.getUser() != null && updatedBook.getUser().getId() != null) {
-                    Optional<User> customerOpt = userService.findUserById(updatedBook.getUser().getId());
-                    customerOpt.ifPresent(existingBook::setUser);
+                if (updatedBook.getLikedUser() != null && !updatedBook.getLikedUser().isEmpty()) {
+                    User user = updatedBook.getLikedUser().get(0);
+                    existingBook.getLikedUser().clear();
+                    existingBook.getLikedUser().add(user); // Aggiunge l'utente selezionato al libro
                 }
             }
             existingBook.setTitle(updatedBook.getTitle());
             existingBook.setAuthor(updatedBook.getAuthor());
-            existingBook.setYear(updatedBook.getYear());
+            existingBook.setIsbm(updatedBook.getIsbm());
             bookService.save(existingBook);
             return "redirect:/book/";
         } else {
             return "book_not_found";
         }
-
     }
+
+
+
+
     @PostMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);

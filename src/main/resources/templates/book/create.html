@@ -27,16 +27,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="year" class="form-label">Year</label>
-                    <input type="text" class="form-control" th:field="*{year}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="user" class="form-label">User</label>
-                    <select id="user" class="form-control" th:field="*{user}">
-                        <option th:value="null" th:text="'No customer'">No Customer</option>
-                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fname} + ' ' + ${user.lname}"></option>
-                    </select>
+                    <label for="isbm" class="form-label">Isbm</label>
+                    <input type="text" class="form-control" th:field="*{isbm}">
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between">

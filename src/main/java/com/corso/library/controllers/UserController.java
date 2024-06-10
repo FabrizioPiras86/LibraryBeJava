@@ -1,6 +1,8 @@
 package com.corso.library.controllers;
 
+import com.corso.library.controllers.service.BookService;
 import com.corso.library.controllers.service.UserService;
+import com.corso.library.entities.Book;
 import com.corso.library.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BookService bookService;
 
 
     @GetMapping("/")
@@ -52,14 +57,7 @@ public class UserController {
     public String showUpdateForm(@PathVariable Long id, Model model) {
         Optional<User> user = userService.findUserById(id);
         if (user.isPresent()) {
-
-            User userObj = user.get();
-            if (userObj.getDob() != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formattedDob = userObj.getDob().format(formatter);
-                model.addAttribute("dob", formattedDob);
-            }
-            model.addAttribute("user", userObj);
+            model.addAttribute("user", user.get());
         } else {
             model.addAttribute("error", "User not found");
         }

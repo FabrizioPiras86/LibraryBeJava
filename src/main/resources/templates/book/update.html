@@ -27,22 +27,23 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="year" class="form-label">Year</label>
-                    <input type="text" class="form-control" th:field="*{year}">
+                    <label for="isbm" class="form-label">ISBN</label>
+                    <input type="text" class="form-control" th:field="*{isbm}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="user" class="form-label">User</label>
-                    <select id="user" class="form-control" th:field="*{user}">
+                    <label for="likedUser" class="form-label">User</label>
+                    <select id="likedUser" class="form-control" th:field="*{likedUser}">
                         <option th:value="null" th:text="'No customer'">No customer</option>
-                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fname} + ' ' + ${user.lname}"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fname} + ' ' + ${user.lname}" th:selected="${currentUser != null and user.id == currentUser.id}"></option>
                     </select>
                 </div>
 
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="removeUser" name="removeUser">
+                    <input type="checkbox" class="form-check-input" id="removeUser" name="removeUserFlag">
                     <label class="form-check-label" for="removeUser">Remove User</label>
                 </div>
+                <input type="hidden" name="removeUserFlag" value="false">
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <button class="btn btn-primary" type="submit">Update</button>

@@ -73,10 +73,15 @@ public class BookService {
         if (bookOptional.isPresent() && userOptional.isPresent()) {
             Book book = bookOptional.get();
             User user = userOptional.get();
-            book.getLikedUser().remove(user); // Rimuovi l'utente dal libro
+            book.getLikedUser().remove(user);
             bookRepository.save(book);
         }
     }
+
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
 
 
 }

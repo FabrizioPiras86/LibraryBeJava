@@ -5,6 +5,7 @@ import com.corso.library.controllers.service.UserService;
 import com.corso.library.entities.Book;
 import com.corso.library.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -100,6 +101,15 @@ public class BookController {
         bookService.deleteBook(id);
         return "redirect:/book/";
     }
+
+    @GetMapping("/all")
+    @ResponseBody
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = bookService.getBooks();
+        return ResponseEntity.ok(books);
+    }
+
+
 
 }
 

@@ -1,34 +1,12 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Library</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        .hero {
-            background: rgb(34,193,195);
-            background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
-            background-size: cover;
-            color: white;
-            padding: 100px 0;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-        .hero p {
-            font-size: 1.25rem;
-        }
-        .card-body {
-            background-color: #f8f9fa;
-        }
-        .cta-button {
-            margin: 0 10px;
-        }
-    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+<nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="http://localhost:8080/">Library</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +14,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="http://localhost:8080/">Home</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/book/}">Book</a>
                 </li>
@@ -52,25 +27,83 @@
         </div>
     </div>
 </nav>
-
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6">
-            <h2>Select User</h2>
+            <h2>New Lend</h2>
             <select id="userSelect" class="form-select mb-3">
+                <option value="">Select User</option>
             </select>
-        </div>
-        <div class="col-md-6">
-            <h2>Select Book</h2>
             <select id="bookSelect" class="form-select mb-3">
+                <option value="">Select Book</option>
             </select>
+            <button id="createLend" class="btn btn-primary">Create Lend</button>
         </div>
     </div>
-    <button id="createLend" class="btn btn-primary">Create Lend</button>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchUsersAndBooks();
+    });
 
+    function fetchUsersAndBooks() {
+        fetch('http://localhost:8080/user/all')
+            .then(response => response.json())
+            .then(users => {
+                const userSelect = document.getElementById('userSelect');
+                users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.text = user.fname + ' ' + user.lname;
+                    userSelect.add(option);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+        fetch('http://localhost:8080/book/all')
+            .then(response => response.json())
+            .then(books => {
+                const bookSelect = document.getElementById('bookSelect');
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book.id;
+                    option.text = book.title;
+                    bookSelect.add(option);
+                });
+            })
+            .catch(error => console.error('Error fetching books:', error));
+    }
+
+    document.getElementById('createLend').addEventListener('click', function() {
+        const userId = document.getElementById('userSelect').value;
+        const bookId = document.getElementById('bookSelect').value;
+
+        if (userId && bookId) {
+            fetch('http://localhost:8080/lend/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    userId: userId,
+                    bookId: bookId
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Loan Successfully Created');
+                        window.location.href = '/book/';
+                    } else {
+                        alert('Unable to create loan');
+                    }
+                })
+                .catch(error => console.error('Error creating lend:', error));
+        } else {
+            alert('Seleziona sia un utente che un libro');
+        }
+    });
+</script>
 </body>
 </html>

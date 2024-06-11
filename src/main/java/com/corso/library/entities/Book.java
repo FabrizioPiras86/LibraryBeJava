@@ -1,5 +1,6 @@
 package com.corso.library.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -45,6 +46,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "id_book"),
             inverseJoinColumns = @JoinColumn(name = "id_user")
     )
+    @JsonManagedReference
     private List<User> likedUser = new ArrayList<>();
 
 

@@ -5,6 +5,7 @@ import com.corso.library.controllers.service.UserService;
 import com.corso.library.entities.Book;
 import com.corso.library.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -71,5 +72,12 @@ public class UserController {
         user.setId(id);
         userService.updateUser(user);
         return "redirect:/user/";
+    }
+
+    @GetMapping("/all")
+    @ResponseBody
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUserOrderedByLastName();
+        return ResponseEntity.ok(users);
     }
 }
